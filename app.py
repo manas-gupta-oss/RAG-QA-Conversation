@@ -28,7 +28,10 @@ if api_key:
     llm=ChatGroq(groq_api_key=api_key,model_name="Gemma2-9b-It")
 
     #chat interface
+    session_id=st.text_input("Session ID (optional)", value="default_session")
+
     
+
 
 
 

@@ -28,11 +28,16 @@ if api_key:
     llm=ChatGroq(groq_api_key=api_key,model_name="Gemma2-9b-It")
 
     #chat interface
-    session_id=st.text_input("Session ID (optional)", value="default_session")
+    session_id=st.text_input("Session ID ", value="default_session")
 
+    #statefully manage chathistory
+    if 'store' not in st.session_state:
+        st.session_state['store'] = {}
+
+    uploaded_file=st.file_uploader("Upload a PDF file", type=["pdf"],accept_multiple_files=False)
+     
+    # Process Uploaded files
     
-
-
 
 
 

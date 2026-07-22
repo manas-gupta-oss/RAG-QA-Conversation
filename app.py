@@ -1,3 +1,4 @@
+from langchain.document_loaders import PyPDFLoader
 from langchain_classic.embeddings import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 from langchain_chroma import Chroma
@@ -6,6 +7,7 @@ from langchain.chains import create_history_aware_retriever,create_retrieval_cha
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 import streamlit as st
 
 from dotenv import load_dotenv
@@ -34,12 +36,39 @@ if api_key:
     if 'store' not in st.session_state:
         st.session_state['store'] = {}
 
-    uploaded_file=st.file_uploader("Upload a PDF file", type=["pdf"],accept_multiple_files=False)
-     
-    # Process Uploaded files
-    
+uploaded_files = st.file_uploader(
+    "Upload PDF files",
+    type=["pdf"],
+    accept_multiple_files=False
+)
 
+if uploaded_files:
 
+    documents = []
+
+    for uploaded_file in uploaded_files:
+
+        # Create a temporary file name
+        temppdf = f"./{uploaded_file.name}"
+
+        # Save the uploaded PDF
+        with open(temppdf, "wb") as file:
+            file.write(uploaded_file.getvalue())
+
+        # Load the PDF
+        loader = PyPDFLoader(temppdf)
+
+        # Extract pages/documents
+        docs = loader.load()
+
+        # Add the pages to the main documents list
+        documents.extend(docs)
+
+        #split and create embeddings for the documents
+        text_splitter=RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+        splits=text_splitter.split_documents(documents)
+        vectorstore=Chroma.from_documents(documents=splits, embedding=embeddings)
+        retriever=
 
 
 
